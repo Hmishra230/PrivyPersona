@@ -37,5 +37,3 @@ Modern personalization systems rely on **personally identifiable information (PI
 
 ---
 
-## 🧱 Project Structure
-
