@@ -9,14 +9,6 @@
 
 ---
 
-## 🚀 Demo
-
-![demo](https://user-images.githubusercontent.com/your-username/your-demo.gif)
-
-🧪 Try the live version (if deployed):  
-`Coming soon...`
-
----
 
 ## 📌 Problem Statement
 
