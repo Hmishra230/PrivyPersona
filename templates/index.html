@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Personalized Experience</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    #add-data-button {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    #add-data-button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <button id="add-data-button" onclick="addSampleData()">Add Sample Data</button>
+
+  <h1>🛍️ Welcome to Your Smart Shopping Experience</h1>
+  <p>Scroll and stay a while to help us personalize your journey...</p>
+  <div id="personalized-content">Loading your experience...</div>
+
+  <script>
+    let dwellTime = 0;
+
+    // Dwell timer
+    setInterval(() => {
+      dwellTime += 1;
+    }, 1000);
+
+    // Scroll tracking
+    window.onscroll = function () {
+      const scrollDepth = (window.scrollY / document.body.scrollHeight) * 100;
+      fetch('/track-scroll', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scrollDepth: scrollDepth }),
+      });
+    };
+
+    // Before unload: log dwell time
+    window.onbeforeunload = function () {
+      navigator.sendBeacon('/track-dwell-time', JSON.stringify({ dwellTime }));
+    };
+
+    // Load personalized content
+    function loadPersonalization() {
+      fetch('/personalize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ scrollDepth: 70, dwellTime: dwellTime }),
+      })
+        .then(res => res.json())
+        .then(data => {
+          const el = document.getElementById('personalized-content');
+          if (data.personalized_content) {
+            el.textContent = data.personalized_content;
+          } else {
+            el.textContent = "Couldn't personalize experience: " + (data.error || 'Unknown error');
+          }
+        });
+    }
+
+    window.onload = function () {
+      setTimeout(loadPersonalization, 5000);
+    };
+
+    // Add sample data manually
+    function addSampleData() {
+      fetch('/add-sample-data')
+        .then(res => res.text())
+        .then(msg => alert(msg));
+    }
+  </script>
+</body>
+</html>
